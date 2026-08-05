@@ -1,0 +1,43 @@
+==============================================================
+  DEMO - Portal para DESPACHO CONTABLE ("Contadores y Asociados")
+==============================================================
+
+Es una DEMOSTRACION para vender. TODOS los datos son de EJEMPLO
+(inventados). Sirve para enseñarle a un despacho contable como se
+veria SU portal. Mismo estilo que tu portal, pero en azul y con
+modulos que si usa un contador.
+
+MODULOS QUE TRAE (con datos de ejemplo):
+  - Tablero (KPIs + grafica de ingresos)
+  - Facturacion (CFDI): facturas emitidas/recibidas + IVA
+  - Calculo de impuestos: IVA e ISR del mes (interactivo)
+  - Estados financieros: estado de resultados
+  - Clientes del despacho: cartera de clientes
+  - Obligaciones ante el SAT: vencimientos
+
+--------------------------------------------------------------
+CORRERLO EN TU PC (para probarlo)
+--------------------------------------------------------------
+  1) Una vez:   py -m pip install -r requirements.txt
+  2) Abrirlo:   py -m streamlit run app.py
+  Entra con usuario/clave "demo" (ya vienen puestos, solo da Entrar).
+
+--------------------------------------------------------------
+SUBIRLO GRATIS A INTERNET (Streamlit Cloud) para tener un LINK
+--------------------------------------------------------------
+  1) El codigo ya esta en tu repositorio de GitHub (carpeta
+     demo_contadores).
+  2) Entra a  https://share.streamlit.io  con tu cuenta (la misma
+     de tu otro demo) y da "New app".
+  3) Elige tu repositorio y, en "Main file path", pon:
+        demo_contadores/app.py
+  4) Deploy. En 1-2 minutos te da un link publico para enseñar.
+
+--------------------------------------------------------------
+PERSONALIZARLO PARA OTRO PROSPECTO
+--------------------------------------------------------------
+  - Nombre y color: arriba de app.py estan  MARCA  y  COLOR.
+  - Colores del tema: .streamlit/config.toml
+  - Los datos de ejemplo estan en las funciones _clientes(),
+    _facturas(), etc. (puedes cambiarlos por otros inventados).
+==============================================================

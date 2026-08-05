@@ -1,0 +1,7 @@
+# Tema del DEMO para despacho contable "Contadores y Asociados" (azul)
+[theme]
+base = "dark"
+primaryColor = "#2F88E0"
+backgroundColor = "#0F1318"
+secondaryBackgroundColor = "#171C22"
+textColor = "#EAF0F6"
