@@ -19,7 +19,8 @@ import streamlit as st
 MARCA = "Contadores y Asociados"
 COLOR = "#2F88E0"
 
-st.set_page_config(page_title=f"Portal {MARCA}", page_icon="📘", layout="wide")
+st.set_page_config(page_title=f"Portal {MARCA}", page_icon="📘", layout="wide",
+                   initial_sidebar_state="expanded")
 
 
 # --------------------------------------------------------------------------- #
@@ -90,6 +91,14 @@ def _css() -> None:
               background:#171C22; color:#EAF0F6; font-weight:600;
           }
           .st-key-menu div[data-testid="stButton"] button:hover{
+              border-color:#2F88E0; background:#1B222B;
+          }
+          /* Menu lateral (barra izquierda) como el portal real */
+          [data-testid="stSidebar"] div[data-testid="stButton"] button{
+              justify-content:flex-start; text-align:left; font-weight:600;
+              border:1px solid #232B34; border-radius:12px; background:#171C22; color:#EAF0F6;
+          }
+          [data-testid="stSidebar"] div[data-testid="stButton"] button:hover{
               border-color:#2F88E0; background:#1B222B;
           }
           .st-key-login_box{ max-width: 400px; margin: 0 auto; }
@@ -261,13 +270,23 @@ def main() -> None:
     if not st.session_state.get("entro"):
         login()
         return
+    pag = st.session_state.get("pag", "inicio")
     with st.sidebar:
         st.markdown(f"### {MARCA}")
         st.caption("DEMOSTRACIÓN · datos de ejemplo")
-        if st.button("Cerrar sesión", use_container_width=True):
+        st.write("")
+        if st.button("🏠 Inicio", use_container_width=True, key="nav_inicio"):
+            st.session_state["pag"] = "inicio"
+            st.rerun()
+        for _clave, _titulo in _MENU:
+            if st.button(_titulo, use_container_width=True, key=f"nav_{_clave}"):
+                st.session_state["pag"] = _clave
+                st.rerun()
+        st.write("")
+        st.divider()
+        if st.button("Cerrar sesión", use_container_width=True, key="nav_salir"):
             st.session_state.clear()
             st.rerun()
-    pag = st.session_state.get("pag", "inicio")
     if pag == "inicio":
         inicio()
     else:
