@@ -268,13 +268,18 @@ _RUTAS = {"tablero": tablero, "facturas": facturas, "impuestos": impuestos,
           "estados": estados, "clientes": clientes, "obligaciones": obligaciones}
 
 
-def _sin_zoom() -> None:
-    """Desactiva el zoom (pellizco en celular, doble toque y Ctrl+rueda en PC)."""
+def _mejoras_movil(color: str = "#2F88E0") -> None:
+    """Celular: desactiva el zoom y agrega un boton 'Menu' para reabrir la barra."""
     components.html(
         """
         <script>
         (function () {
           const doc = window.parent.document;
+          if (doc.getElementById('__miMenuInit')) { return; }
+          const flag = doc.createElement('span');
+          flag.id = '__miMenuInit'; flag.style.display = 'none'; doc.body.appendChild(flag);
+
+          // 1) Desactivar zoom
           let meta = doc.querySelector('meta[name="viewport"]');
           if (!meta) { meta = doc.createElement('meta'); meta.name = 'viewport'; doc.head.appendChild(meta); }
           meta.setAttribute('content',
@@ -289,16 +294,36 @@ def _sin_zoom() -> None:
           doc.addEventListener('keydown', (e) => {
             if ((e.ctrlKey || e.metaKey) && ['+','-','=','0'].includes(e.key)) e.preventDefault();
           });
+
+          // 2) Boton flotante "Menu" para reabrir la barra lateral cuando se oculta
+          function fire(el){ ['pointerdown','mousedown','pointerup','mouseup','click'].forEach(t =>
+            el.dispatchEvent(new MouseEvent(t, {bubbles:true, cancelable:true, view:window}))); }
+          function toggle(){
+            const btn = doc.querySelector('[data-testid="stSidebarCollapseButton"] button')
+                     || doc.querySelector('button[data-testid="stExpandSidebarButton"]');
+            if (btn) fire(btn);
+          }
+          const b = doc.createElement('button');
+          b.type = 'button'; b.textContent = '\\u2630 Menu';
+          b.style.cssText = 'position:fixed;top:10px;left:10px;z-index:2147483647;background:__COLOR__;'
+            + 'color:#fff;border:none;border-radius:10px;padding:8px 14px;'
+            + 'font:700 15px system-ui,sans-serif;box-shadow:0 4px 12px rgba(0,0,0,.35);cursor:pointer;display:none';
+          b.addEventListener('click', toggle);
+          doc.body.appendChild(b);
+          setInterval(function(){
+            const colapsada = !!doc.querySelector('button[data-testid="stExpandSidebarButton"]');
+            b.style.display = colapsada ? 'block' : 'none';
+          }, 300);
         })();
         </script>
-        """,
+        """.replace("__COLOR__", color),
         height=0,
     )
 
 
 def main() -> None:
     _css()
-    _sin_zoom()
+    _mejoras_movil("#2F88E0")
     if not st.session_state.get("entro"):
         login()
         return
