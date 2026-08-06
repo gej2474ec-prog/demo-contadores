@@ -15,6 +15,7 @@ import datetime as dt
 
 import pandas as pd
 import streamlit as st
+import streamlit.components.v1 as components
 
 MARCA = "Contadores y Asociados"
 COLOR = "#2F88E0"
@@ -101,6 +102,8 @@ def _css() -> None:
           [data-testid="stSidebar"] div[data-testid="stButton"] button:hover{
               border-color:#2F88E0; background:#1B222B;
           }
+          /* La flecha para abrir/cerrar el menu lateral SIEMPRE visible (en celular no hay hover) */
+          [data-testid="stSidebarCollapseButton"]{ visibility:visible !important; opacity:1 !important; }
           .st-key-login_box{ max-width: 400px; margin: 0 auto; }
         </style>
         """.replace("#2F88E0", COLOR),
@@ -265,8 +268,37 @@ _RUTAS = {"tablero": tablero, "facturas": facturas, "impuestos": impuestos,
           "estados": estados, "clientes": clientes, "obligaciones": obligaciones}
 
 
+def _sin_zoom() -> None:
+    """Desactiva el zoom (pellizco en celular, doble toque y Ctrl+rueda en PC)."""
+    components.html(
+        """
+        <script>
+        (function () {
+          const doc = window.parent.document;
+          let meta = doc.querySelector('meta[name="viewport"]');
+          if (!meta) { meta = doc.createElement('meta'); meta.name = 'viewport'; doc.head.appendChild(meta); }
+          meta.setAttribute('content',
+            'width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no');
+          const s = doc.createElement('style');
+          s.textContent = 'html,body{touch-action:manipulation;}';
+          doc.head.appendChild(s);
+          const stop = (e) => { if (e.ctrlKey || e.metaKey) e.preventDefault(); };
+          doc.addEventListener('wheel', stop, { passive: false });
+          ['gesturestart','gesturechange','gestureend'].forEach((ev) =>
+            doc.addEventListener(ev, (e) => e.preventDefault(), { passive: false }));
+          doc.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && ['+','-','=','0'].includes(e.key)) e.preventDefault();
+          });
+        })();
+        </script>
+        """,
+        height=0,
+    )
+
+
 def main() -> None:
     _css()
+    _sin_zoom()
     if not st.session_state.get("entro"):
         login()
         return
